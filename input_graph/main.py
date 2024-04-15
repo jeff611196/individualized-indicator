@@ -6,12 +6,6 @@ Created on Tue Apr  9 15:37:09 2024
 @author: jeff
 """
 import os
-
-os.chdir('/Users/jeff/desktop/project/二原圖')
-current_directory = os.getcwd()
-print("当前工作目录:", current_directory)
-
-
 from fund_module import gcs_read
 from fund_module import fund_monthly
 from fund_module import fund_read

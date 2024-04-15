@@ -11,8 +11,7 @@ import tejapi
 from pandas import read_parquet
 import pandas as pd
 
-stock = pd.read_csv('/Users/jeff/desktop/project/TEJ資料/基金/stock.csv', index_col=0)
-taiwan = pd.read_csv('/Users/jeff/desktop/project/TEJ資料/基金/本國信託基金.csv')
+stock = pd.read_csv('../stock.csv', index_col=0)
 gcs_read = 'gs://dst-tej/fund/twn/amm/raw-data/20220101-20221231.parquet'
 fund_monthly = read_parquet(gcs_read)
 fund_read = 'gs://dst-tej/fund/twn/aatt/raw-data/20240101-20240101.parquet'
