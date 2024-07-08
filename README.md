@@ -55,11 +55,27 @@ Individualized-Indicator/
     │    └── year_month_day/            # 開高低收、TSE
     └── 二原圖/
          └── fund/                      # 基金大表
+```
 
+### module
+
+```
+Class recommend_stock:
+_init_
+•	設定日期
+•	基金資料讀取、持股資料整理
+•	台股上市櫃的list
+•	所有持股股價資訊(開高低收量)Plumber讀取
+•	大盤資料讀取
+•	持股股價資訊整理成開、高、低、收、量五個大表
+•	持股股價資訊整理隔日收益
+•	Talib的158個技術指標
+•	持股股價資訊個股128維embedding的表格
+![alt text](image.png)
 
 ```
 
-#### Environment Setup
+### Environment Setup
 ---
 
 1. clone project
