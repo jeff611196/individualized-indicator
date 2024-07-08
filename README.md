@@ -71,5 +71,5 @@ git clone https://gitlab.com/dst-dev/individualized-indicator.git
 2. 安裝所需套件
 
 ```python
-cat requirements.txt | xargs -n 1 -L 1 pip install
+sh local.sh
 ```

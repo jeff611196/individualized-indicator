@@ -5,9 +5,10 @@
 
 # @author: jeff
 # """
+
 import os
 
-os.chdir('/Users/jeff/desktop/individualized-indicator')
+os.chdir('/home/jovyan/individualized-indicator')
 current_directory = os.getcwd()
 print("当前工作目录:", current_directory)
 
@@ -20,14 +21,14 @@ from indicator_coefficient import *
 from backtest.backtest_pkl import *
 
 ind_start = '2021-11-01'
-ind_end = '2023-12-31'
-day_start = '2022-07-01'
-day_end = '2022-11-30'
-test_start = '2022-12-01'
-test_end = '2023-12-29'
-train_season = '2022_09_01'
-use_emb = 'embeddings_length200_2022_09_01.npy'
-parameter = "emb/2022_09_01/top_8/*.csv"
+ind_end = '2024-06-28'
+day_start = '2023-01-03'
+day_end = '2023-05-31'
+test_start = '2023-06-01'
+test_end = '2024-06-28'
+train_season = '2023_03_01'
+use_emb = 'embeddings_length200_2023_03_01.npy'
+parameter = "emb/2023_03_01/top_8/*.csv"
 
 
 
@@ -44,8 +45,8 @@ etl.emb_path_list = glob.glob(parameter)
 # input_backtest_table = Input_backtest_table(etl,'top_'+str(TOP_k), test_start, test_end, train_season)
 # input_backtest_table_calculate = input_backtest_table.calculate()
 
-# # save top_indicator(技術指標的相關係數依高低排序)
-# stock_indicator_corr = etl.New_indicator(train_season)
+# save top_indicator(技術指標的相關係數依高低排序)
+stock_indicator_corr = etl.New_indicator(train_season)
 
 # 大盤技術指標
 indicator_table_ori = etl.tech_indicator()
@@ -96,6 +97,6 @@ indicator_coefficient_calculate = indicator_coefficient.calculate(TOP_k,train_se
 
 # etl.emb_path_list = glob.glob(parameter)
 
-# # 回測
-# input_backtest_table = Input_backtest_table(etl,'top_'+str(TOP_k), test_start, test_end, train_season)
-# input_backtest_table_calculate = input_backtest_table.calculate()
+# 回測
+input_backtest_table = Input_backtest_table(etl,'top_'+str(TOP_k), test_start, test_end, train_season)
+input_backtest_table_calculate = input_backtest_table.calculate()
