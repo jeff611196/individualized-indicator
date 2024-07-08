@@ -14,6 +14,8 @@ from NN_model.nn import *
 import statistics
 import os
 import shutil
+from torch.utils.tensorboard import SummaryWriter
+writer = SummaryWriter(log_dir='runs/experiment_1')
 
 class Indicator_coefficient:
             
@@ -90,7 +92,7 @@ class Indicator_coefficient:
                 optimizer = torch.optim.SGD(model.parameters(), lr=0.05)
                 # optimizer = torch.optim.Adam(model.parameters(), lr=0.1, betas=(0.9, 0.999), eps=1e-08, weight_decay=0, amsgrad=False)
                 
-                epochs = 10
+                epochs = 200
                 
                 loss_list = []
                 para = []
@@ -130,7 +132,8 @@ class Indicator_coefficient:
                     
                     a=a/35
                     loss_list.append(a)    
-                
+                    writer.add_scalar('Average Loss per Epoch', a, epoch)
+
                 if np.isnan(loss_look) == True:
                     continue    
                 
