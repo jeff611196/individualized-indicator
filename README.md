@@ -80,15 +80,18 @@ _init_
 •	Talib的158個技術指標
 
 •	持股股價資訊個股128維embedding的表格
+
 ![error](Image/image_2.png)
 
 ```
 New_indicator
 ```
 •	整理持股技術指標的表
+
 ![error](Image/image_3.png)
 
 •	指標跟隔日收益的相關係數
+
 ![error](Image/image_4.png)
 
 •	各個指標的所有個股相關係數平均
