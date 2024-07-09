@@ -18,7 +18,7 @@
 <br>
 
 ## Project Architecture
-![](Image/image_1.png)
+![error](Image/image_1.png)
 
 ## 使用方法
 
@@ -62,18 +62,90 @@ Individualized-Indicator/
 ```
 Class recommend_stock:
 _init_
+```
 •	設定日期
+
 •	基金資料讀取、持股資料整理
+
 •	台股上市櫃的list
+
 •	所有持股股價資訊(開高低收量)Plumber讀取
+
 •	大盤資料讀取
+
 •	持股股價資訊整理成開、高、低、收、量五個大表
+
 •	持股股價資訊整理隔日收益
+
 •	Talib的158個技術指標
+
 •	持股股價資訊個股128維embedding的表格
-![alt text](image.png)
+![error](Image/image_2.png)
 
 ```
+New_indicator
+```
+•	整理持股技術指標的表
+![error](Image/image_3.png)
+
+•	指標跟隔日收益的相關係數
+![error](Image/image_4.png)
+
+•	各個指標的所有個股相關係數平均
+
+![error](Image/image_5.png)
+
+```
+tech_indicator
+```
+•	大盤的技術指標表
+
+![error](Image/image_6.png)
+
+```
+Class Top_k:
+_init_
+```
+•	讀取各個指標的所有個股相關係數平均
+
+![error](Image/image_7.png)
+
+```
+clean_na_corr
+```
+•	計算大盤各指標與TOP指標的相關係數
+
+![error](Image/image_8.png)
+
+•	大盤技術指標表去除與TOP指標相關係數NA值(無相關係數代表沒有指標數值)
+
+•	去除指標的值unique < 6(代表指標只有小於6種數值)
+
+```
+indicator_info
+```
+•	選取與TOP指標相關性最小的指標作為第二挑選的指標
+
+•	將各指標與TOP指標的相關係數表去掉相關性 > 0.3的項目
+
+```
+class Indicator_coefficient:
+_init_
+```
+•	讀取indicator_top_list
+
+•	讀取個股embeddings
+
+```
+calculate
+New_indicator_IO
+```
+•	個股技術指標大表
+
+![error](Image/image_9.png)
+
+•	隔日收益
+•	個股embeddings
 
 ### Environment Setup
 ---
