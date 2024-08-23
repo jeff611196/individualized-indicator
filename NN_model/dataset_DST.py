@@ -65,19 +65,18 @@ class recommend_stock:
                 "tickers": ",".join([stock for stock in self.DEFAULT_STOCKS]),
             },
         )
-        quote_data.index.set_levels(
-            pd.to_datetime(quote_data.index.levels[1]),
-            level=1,
-            inplace=True,
-        )
+        
+        quote_data.index = quote_data.index.set_levels(
+            pd.to_datetime(quote_data.index.levels[1]),level=1)
+
         quote_data.rename_axis(index={
             'ticker': 'instrument'
         }, inplace=True)
+        
         self.quote_data = quote_data
         stock_df = quote_data.reset_index()
         datatime_unique = np.unique(stock_df.iloc[:,1])
-        
-        
+
         TSE = pd.read_parquet(
             f"{PLUMBER_HOST}stocks/tw/ohlcv",
             storage_options={
@@ -87,11 +86,10 @@ class recommend_stock:
                 "tickers": ",".join([stock for stock in ['Y9999']]),
             },
         )
-        TSE.index.set_levels(
-            pd.to_datetime(TSE.index.levels[1]),
-            level=1,
-            inplace=True,
-        )
+        
+        TSE.index = TSE.index.set_levels(
+            pd.to_datetime(TSE.index.levels[1]),level=1)
+        
         TSE.rename_axis(index={
             'ticker': 'instrument'
         }, inplace=True)
@@ -100,63 +98,63 @@ class recommend_stock:
         
         
 
-        self.TSE = TSE
+        # self.TSE = TSE
         
-        if not os.path.exists('./price/'+train_season):
+        # if not os.path.exists('./price/'+train_season):
             
-            os.mkdir('./price/'+train_season)
+        #     os.mkdir('./price/'+train_season)
         
-        TSE.to_csv('./price/'+train_season+'/TSE.csv')
+        # TSE.to_csv('./price/'+train_season+'/TSE.csv')
 
-        open_ = pd.DataFrame(index=datatime_unique, columns=self.DEFAULT_STOCKS)
-        high_ = pd.DataFrame(index=datatime_unique, columns=self.DEFAULT_STOCKS)
-        low_ = pd.DataFrame(index=datatime_unique, columns=self.DEFAULT_STOCKS)
-        close_ = pd.DataFrame(index=datatime_unique, columns=self.DEFAULT_STOCKS)
-        vol_ = pd.DataFrame(index=datatime_unique, columns=self.DEFAULT_STOCKS)
+        # open_ = pd.DataFrame(index=datatime_unique, columns=self.DEFAULT_STOCKS)
+        # high_ = pd.DataFrame(index=datatime_unique, columns=self.DEFAULT_STOCKS)
+        # low_ = pd.DataFrame(index=datatime_unique, columns=self.DEFAULT_STOCKS)
+        # close_ = pd.DataFrame(index=datatime_unique, columns=self.DEFAULT_STOCKS)
+        # vol_ = pd.DataFrame(index=datatime_unique, columns=self.DEFAULT_STOCKS)
         
-        for t in range(0,len(datatime_unique)):
-            datatime_row = np.where(stock_df.iloc[:,1] == datatime_unique[t])[0]
-            date_stock = stock_df.iloc[datatime_row,:]
+        # for t in range(0,len(datatime_unique)):
+        #     datatime_row = np.where(stock_df.iloc[:,1] == datatime_unique[t])[0]
+        #     date_stock = stock_df.iloc[datatime_row,:]
 
-            for i_0 in range(date_stock.shape[0]):
-                    col_open = np.where(date_stock['instrument'].iloc[i_0] == open_.columns)[0][0]
-                    open_.iloc[t,col_open] = date_stock['open'].iloc[i_0]
-            for i_1 in range(date_stock.shape[0]):
-                    col_high = np.where(date_stock['instrument'].iloc[i_1] == high_.columns)[0][0]
-                    high_.iloc[t,col_high] = date_stock['high'].iloc[i_1]
-            for i_2 in range(date_stock.shape[0]):
-                    col_low = np.where(date_stock['instrument'].iloc[i_2] == open_.columns)[0][0]
-                    low_.iloc[t,col_low] = date_stock['low'].iloc[i_2]
-            for i_3 in range(date_stock.shape[0]):
-                    col_close = np.where(date_stock['instrument'].iloc[i_3] == open_.columns)[0][0]
-                    close_.iloc[t,col_close] = date_stock['close'].iloc[i_3]
-            for i_4 in range(date_stock.shape[0]):
-                    col_vol = np.where(date_stock['instrument'].iloc[i_4] == open_.columns)[0][0]
-                    vol_.iloc[t,col_vol] = date_stock['volume'].iloc[i_4]
+        #     for i_0 in range(date_stock.shape[0]):
+        #             col_open = np.where(date_stock['instrument'].iloc[i_0] == open_.columns)[0][0]
+        #             open_.iloc[t,col_open] = date_stock['open'].iloc[i_0]
+        #     for i_1 in range(date_stock.shape[0]):
+        #             col_high = np.where(date_stock['instrument'].iloc[i_1] == high_.columns)[0][0]
+        #             high_.iloc[t,col_high] = date_stock['high'].iloc[i_1]
+        #     for i_2 in range(date_stock.shape[0]):
+        #             col_low = np.where(date_stock['instrument'].iloc[i_2] == open_.columns)[0][0]
+        #             low_.iloc[t,col_low] = date_stock['low'].iloc[i_2]
+        #     for i_3 in range(date_stock.shape[0]):
+        #             col_close = np.where(date_stock['instrument'].iloc[i_3] == open_.columns)[0][0]
+        #             close_.iloc[t,col_close] = date_stock['close'].iloc[i_3]
+        #     for i_4 in range(date_stock.shape[0]):
+        #             col_vol = np.where(date_stock['instrument'].iloc[i_4] == open_.columns)[0][0]
+        #             vol_.iloc[t,col_vol] = date_stock['volume'].iloc[i_4]
 
-        open_filled = open_.fillna('NA')
-        high_filled = high_.fillna('NA')
-        low_filled = low_.fillna('NA')
-        colse_filled = close_.fillna('NA')
-        vol_filled = vol_.fillna('NA')
+        # open_filled = open_.fillna('NA')
+        # high_filled = high_.fillna('NA')
+        # low_filled = low_.fillna('NA')
+        # colse_filled = close_.fillna('NA')
+        # vol_filled = vol_.fillna('NA')
         
-        open_.index = open_.index.strftime('%Y-%m-%d')
-        high_.index = high_.index.strftime('%Y-%m-%d')
-        low_.index = low_.index.strftime('%Y-%m-%d')
-        close_.index = close_.index.strftime('%Y-%m-%d')
-        vol_.index = vol_.index.strftime('%Y-%m-%d')
+        # open_.index = open_.index.strftime('%Y-%m-%d')
+        # high_.index = high_.index.strftime('%Y-%m-%d')
+        # low_.index = low_.index.strftime('%Y-%m-%d')
+        # close_.index = close_.index.strftime('%Y-%m-%d')
+        # vol_.index = vol_.index.strftime('%Y-%m-%d')
 
-        self.open = open_
-        self.high = high_
-        self.low = low_
-        self.close = close_
-        self.high = high_
+        # self.open = open_
+        # self.high = high_
+        # self.low = low_
+        # self.close = close_
+        # self.high = high_
         
-        open_.to_csv('./price/'+train_season+'/open.csv')
-        high_.to_csv('./price/'+train_season+'/high.csv')
-        low_.to_csv('./price/'+train_season+'/low.csv')
-        close_.to_csv('./price/'+train_season+'/close.csv')
-        vol_.to_csv('./price/'+train_season+'/vol.csv')
+        # open_.to_csv('./price/'+train_season+'/open.csv')
+        # high_.to_csv('./price/'+train_season+'/high.csv')
+        # low_.to_csv('./price/'+train_season+'/low.csv')
+        # close_.to_csv('./price/'+train_season+'/close.csv')
+        # vol_.to_csv('./price/'+train_season+'/vol.csv')
 
 
 
@@ -209,6 +207,8 @@ class recommend_stock:
         for h in range(0,len(self.embeddings_concat)):
         
             self.embeddings_concat.iloc[h,0] = str(int(self.embeddings_concat.iloc[h,0]))
+        
+        print('ok')
 
         #lab
         #self.embeddings = np.load('/home/jeffhsu@cathayholdings.com.tw/stock_fund/'+mode, allow_pickle='TRUE')[()]
@@ -424,98 +424,78 @@ class recommend_stock:
         return df
 
 
-    def New_indicator_IO(self,s,indicator_top_list,emb_path_list_train):# time need revise
+    def New_indicator_IO(self, use_ind, use_stock, emb_path_list_train):# time need revise
 
-        # 挑選使用指標
-        use_indicator = pd.DataFrame(indicator_top_list)
-        # 挑選的標的
-        chose_stock = []
-
-        if type(emb_path_list_train) == str:
-            title_2 = self.emb_path_list[s]
-            self.stock_chose = title_2.split('/')[3][:-4]
-            
-        else:
-            self.stock_chose = emb_path_list_train[s]
-
-        try:
-            col = np.where(self.close.columns == self.stock_chose)[0][0]
-            chose_stock.append(s)
-            #標的是否存在、chose_stock存起來
-        except:
-            d = 'error'
+        date_chose = pd.Series(self.open.index, index=self.open.index, dtype='datetime64[ns]').dt.date
         
+        stock_col = np.where(self.close.columns == use_stock)[0][0]
+
+        open_choose = self.open.iloc[:,stock_col]
+        
+        high_choose = self.high.iloc[:,stock_col]
+        
+        low_choose = self.low.iloc[:,stock_col]
+        
+        close_choose = self.close.iloc[:,stock_col]
+        
+        vol_choose = self.vol.iloc[:,stock_col]
+        
+        t_df = pd.concat([pd.Series([],dtype = 'float64'),date_chose,open_choose,high_choose,low_choose,close_choose,vol_choose],axis = 1)
+        
+        t_df.columns = ['instrument','datetime','open','high','low','close','volume']
+        
+        t_df.iloc[:,0] = use_stock
+
+        t_df.set_index(keys = ['instrument','datetime'],inplace=True)
+        
+        t_df = t_df.fillna(method = 'ffill', axis = 0)
+        
+        if type(emb_path_list_train) == str:
+            day_start = (t_df.index[0][0], Timestamp(self.test_start))
+            day_start_time = day_start[1]
+            day_start_value = day_start_time.date()
+            day_start = (day_start[0], day_start_value)
+            
+            day_end = (t_df.index[0][0], Timestamp(self.test_end))
+            day_end_time = day_end[1]
+            day_end_value = day_end_time.date()
+            day_end = (day_end[0], day_end_value)
+
         else:
-            #產出開高低收表格
-            open_p = self.open
-            open_choose = open_p.iloc[:,col]
+            day_start = (t_df.index[0][0], Timestamp(self.day_start))
+            day_start_time = day_start[1]
+            day_start_value = day_start_time.date()
+            day_start = (day_start[0], day_start_value)
             
-            high_p = self.high
-            high_choose = high_p.iloc[:,col]
-            
-            low_p = self.low
-            low_choose = low_p.iloc[:,col]
-            
-            close_p = self.close
-            close_choose = close_p.iloc[:,col]
-            
-            vol_p = self.vol
-            vol_choose = vol_p.iloc[:,col]
-            
-            date_chose = pd.Series(open_choose.index, index=open_choose.index, dtype='datetime64[ns]').dt.date
-            
-            t_df = pd.concat([pd.Series([],dtype = 'float64'),date_chose,open_choose,high_choose,low_choose,close_choose,vol_choose],axis = 1)
-            
-            t_df.columns = ['instrument','datetime','open','high','low','close','volume']
-            
-            t_df.iloc[:,0] = self.stock_chose
-            
-            t_df_deepcopy = copy.deepcopy(t_df)
-
-            t_df.set_index(keys = ['instrument','datetime'],inplace=True)
-            
-            if type(emb_path_list_train) == str:
-                day_start = (t_df.index[0][0], Timestamp(self.test_start))
-                day_end = (t_df.index[0][0], Timestamp(self.test_end))
-            
-            else:
-                day_start = (t_df.index[0][0], Timestamp(self.day_start))
-                day_end = (t_df.index[0][0], Timestamp(self.day_end))
-            
-            day_start_deepcopy = copy.deepcopy(day_start)
-            day_end_deepcopy = copy.deepcopy(day_end)
+            day_end = (t_df.index[0][0], Timestamp(self.day_end))
+            day_end_time = day_end[1]
+            day_end_value = day_end_time.date()
+            day_end = (day_end[0], day_end_value)
+        
+        # day_start_deepcopy = copy.deepcopy(day_start)
+        # day_end_deepcopy = copy.deepcopy(day_end)
 
 
-            #產出技術指標表格
-            example = getattr(abstract, self.all_ta_label[0])(t_df)
-            d = pd.DataFrame(columns = list(use_indicator.iloc[:,0]),index = example.index) 
+        #產出技術指標表格
+        # example = getattr(abstract, self.all_ta_label[0])(t_df)
+        # d = pd.DataFrame(columns = use_ind, index = example.index)
 
-            day_start_deepcopy = np.where(d.index == day_start_deepcopy)[0][0]
-            day_end_deepcopy = np.where(d.index == day_end_deepcopy)[0][0]
+        # day_start_deepcopy = np.where(d.index == day_start_deepcopy)[0][0]
+        # day_end_deepcopy = np.where(d.index == day_end_deepcopy)[0][0]
+        # d_deepcopy = copy.deepcopy(d)
 
-            d_deepcopy = copy.deepcopy(d)
-
-            d = d.iloc[day_start_deepcopy:day_end_deepcopy+1,:]
-            
-            for z in range(0,len(use_indicator.iloc[:,0])):
-
-                try:        
-                    d_1 = pd.DataFrame({use_indicator.iloc[:,0][z]:getattr(abstract, use_indicator.iloc[:,0][z])(t_df)})
-                    day_start_chose = np.where(d_1.index == day_start)[0][0]
-                    day_end_chose = np.where(d_1.index == day_end)[0][0]+1       
-                    d_1 = d_1.iloc[day_start_chose:day_end_chose,:]
-                    d_1_colname = d_1.columns[0]
-                    d.iloc[:,np.where(d.columns == d_1_colname)[0][0]] = d_1
-                    
-                except:
-                    pass
-
+        # d = d.iloc[day_start_deepcopy:day_end_deepcopy+1,:]
+        use_ind_df = pd.DataFrame({use_ind_num:getattr(abstract, use_ind_num)(t_df) for use_ind_num in use_ind})
+        day_start_chose = np.where(use_ind_df.index == day_start)[0][0]
+        day_end_chose = np.where(use_ind_df.index == day_end)[0][0]+1       
+        use_ind_df = use_ind_df.iloc[day_start_chose:day_end_chose,:]
+        
         #標的隔日漲幅
         ups_downs = self.ups_downs
         
-        ups_downs_copy = copy.deepcopy(ups_downs)
+        ups_downs = ups_downs.fillna(method = 'ffill', axis = 0)
         
-        stock_col = np.where(ups_downs.columns == self.stock_chose)[0][0]
+        stock_col = np.where(ups_downs.columns == use_stock)[0][0]
 
         time_start = np.where(ups_downs.index == self.day_start)[0][0]
         time_end = np.where(ups_downs.index == self.day_end)[0][0]
@@ -525,16 +505,26 @@ class recommend_stock:
         #標的embedding
         select_embedding = self.embeddings_concat
 
-        select_embedding_row = np.where(pd.DataFrame(select_embedding.iloc[:,0]) == self.stock_chose)[0][0]
+        select_embedding_row = np.where(pd.DataFrame(select_embedding.iloc[:,0]) == use_stock)[0][0]
 
         select_stock_emb = select_embedding.iloc[select_embedding_row,:]
         
         ups_downs = np.array(ups_downs)
 
-        return d, ups_downs, select_stock_emb
+        return use_ind_df, ups_downs, select_stock_emb, self.embeddings_concat
 
+    def create_sliding_windows(self, indicator, targets, input_embedding, window_size, stride):
+        targets = pd.DataFrame(targets)
+        windows = []
+        targets_list = []
+        emb = []
+        for i in range(0, len(indicator) - window_size, stride):
+            windows.append(indicator[i:i + window_size])
+            targets_list.append(targets[i:i + window_size])
+            emb.append(input_embedding[i:i + window_size])
+        return np.array(windows), np.array(targets_list).astype(np.float64), np.array(emb)
 
-    def dataset_new_indicator(self,new_indicator,stock,top_k):
+    def dataset_new_indicator(self, new_indicator, stock, indicator_count, window_size, stride):
 
         new_indicator_copy = copy.deepcopy(new_indicator)
 
@@ -546,15 +536,23 @@ class recommend_stock:
 
         test = new_indicator_copy[0]
 
-        time_start_number = np.where(test.index == (test.index[0][0], Timestamp(self.day_start)))[0][0]
-
-        time_end_number = np.where(test.index == (test.index[0][0], Timestamp(self.day_end)))[0][0]
-
+        time_start = (test.index[0][0], Timestamp(self.day_start))
+        time_start_time = time_start[1]
+        time_start_value = time_start_time.date()
+        time_start = (time_start[0], time_start_value)
+        time_start_number = np.where(test.index == time_start)[0][0]
+        
+        time_end = (test.index[0][0], Timestamp(self.day_end))
+        time_end_time = time_end[1]
+        time_end_value = time_end_time.date()
+        time_end = (time_end[0], time_end_value)
+        time_end_number = np.where(test.index == time_end)[0][0]
+ 
         input_embedding = np.array(emb*(time_end_number - time_start_number+1)).reshape(time_end_number - time_start_number+1,128)        
 
         # self.input_embedding = torch.from_numpy(input_embedding).to(torch.float32)
        
-        self.input_embedding = pd.DataFrame(input_embedding.reshape(test.shape[0],128))
+        self.input_embedding = pd.DataFrame(input_embedding)
        
         targets = new_indicator_copy[1]
 
@@ -567,36 +565,32 @@ class recommend_stock:
         
         minmax_table.set_index(keys = ['stock','minmax'],inplace=True)
         
-        indicator = new_indicator_copy[0].iloc[:,0].values 
-        minmax_table.iloc[0,0] = np.min(indicator)
-        indicator = indicator - np.min(indicator)
-        minmax_table.iloc[1,0] = np.max(indicator)
-        indicator = indicator/np.max(indicator)
-      
-        for i in range(1,len(new_indicator_copy[0].columns)):
+        indicator = new_indicator_copy[0]
         
-            indicator_1 = new_indicator_copy[0].iloc[:,i].values
-            minmax_table.iloc[0,i] = np.min(indicator_1)          
-            indicator_1 = indicator_1 - np.min(indicator_1)
-            minmax_table.iloc[1,i] = np.max(indicator_1)
-            indicator_1 = indicator_1/np.max(indicator_1)
-            warnings.filterwarnings('ignore')
-            
-            if np.isnan(indicator_1).any(axis = 0):
-                print("\n")
-                print("stock",stock,"num",i,"nan",sum(np.isnan(indicator_1)),sep=",")
-
-                index = [i for i, x in enumerate(indicator_1) if np.isnan(x)]
-                indicator_1[index] = 0
-
-                return "ind_can't_softmax"
-
-            indicator = np.vstack((indicator,indicator_1))
+        for i in range(0,indicator.shape[1]):
         
-        indicator = pd.DataFrame(indicator.T)
+            minmax_table.iloc[0,i] = np.min(indicator.iloc[:,i])
+            minmax_table.iloc[1,i] = np.max(indicator.iloc[:,i])
+        # indicator = indicator - np.min(indicator)
+        # indicator = indicator/np.max(indicator)  
+
+        min_val = indicator.min()
+        max_val = indicator.max()
+        max_val_minus_min_val = max_val - min_val
+        indicator_minus_min = indicator.sub(min_val)
+        normalized_indicator = indicator_minus_min / max_val_minus_min_val
         
-        indicator_dataset = Indicator_Dataset(indicator, targets, self.input_embedding)
+        ind_use, targets_use, emb_use = self.create_sliding_windows(normalized_indicator, targets, self.input_embedding, window_size, stride)
+    
+        # 转换为 PyTorch 张量
+        ind_use = torch.tensor(ind_use, dtype=torch.float64)
+        targets_use = torch.tensor(targets_use, dtype=torch.float64)
+        emb_use = torch.tensor(emb_use, dtype=torch.float64)
+        
+        dataset = TensorDataset(ind_use, targets_use, emb_use)
+
+        # indicator_dataset = Indicator_Dataset(indicator, targets, self.input_embedding)
   
         minmax_table.to_csv(self.file_3+'/'+stock+'.csv')
         
-        return indicator_dataset
+        return dataset

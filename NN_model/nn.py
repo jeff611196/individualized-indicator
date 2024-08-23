@@ -9,67 +9,69 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
+import pandas as pd
 from audtorch.metrics.functional import pearsonr
-
 
 class Model(nn.Module):
     
-    
-    def __init__(self,n):
+    def __init__(self, input_dim, indicator_count):
         super(Model, self).__init__()
+        
+        self.linears = nn.ModuleList([nn.Linear(input_dim, 1, bias=False) for i in range(indicator_count)])
+        self.indicator_count = indicator_count
 
-        # self.nn1 = nn.Linear(128, 1, bias = False) #第一層 Linear NN
-        # self.nn2 = nn.Linear(128, 1, bias = False)
-        # self.nn3 = nn.Linear(128, 1, bias = False)
+    def forward(self, use_stock, emb_total):
         
-        # self.linears = nn.ModuleList([nn.Linear(128, 1, bias = False)])
-        self.linears = nn.ModuleList([nn.Linear(128, 1, bias = False) for i in range(n)])
-        self.n = n
-        
-        
-        
+        stock_coid = np.where(emb_total.iloc[:,0] == use_stock)[0][0]
 
-    def forward(self, ind_tensor, embedding):
+        emb_total = emb_total.drop(columns=['s'])
+        emb_total = emb_total.values
+        emb_total = torch.tensor(emb_total)
+     
+        raw_scores = torch.zeros((emb_total.size(0), self.indicator_count), device = emb_total.device)
         
-        matrix_change = np.zeros(3)
-        matrix_change[0] = 1
+        for i, linear in enumerate(self.linears):
+           raw_scores[:, i] = linear(emb_total).squeeze()
+           
+        max_raw_scores = raw_scores.max(dim=0, keepdim=True).values
         
-        self.ind_tensor = ind_tensor
-        self.embedding = embedding
+        adjusted_scores = raw_scores - max_raw_scores
+           
+        normalized_scores = F.softmax(adjusted_scores, dim=0)
         
-        r = []
-        i_part = []
-        
-        for i in range(self.n):
-        
-            r.append(self.linears[i](embedding[0].to(torch.float32)))
-        
-        
-        for t in range(self.n):
-        
-            i_part.append(ind_tensor.T[t]*torch.exp(r[t]))
+        use_normalized_scores = normalized_scores[stock_coid]
         
         
-        i_new = sum(i_part)/sum(torch.exp(r[i]) for i in range(self.n))
+        # r = self.linears[W](embedding[0][0].to(torch.float64))
+       
+        # alpha_denominator = sum(self.linears[W](emb.to(torch.float64)) for emb in emb_total)
+                
+        # alpha = (r/alpha_denominator)
         
+        # i_new = ind_tensor.T[0]*r
 
-        # r_1 = (self.nn1(emb).T @ torch.from_numpy(matrix_change.reshape(3,1)).to(torch.float32))[0]
-        # r_2 = (self.nn2(emb).T @ torch.from_numpy(matrix_change.reshape(3,1)).to(torch.float32))[0]
-        # r_3 = (self.nn3(emb).T @ torch.from_numpy(matrix_change.reshape(3,1)).to(torch.float32))[0]
+        return use_normalized_scores
+    
+    def optimize_indicator(self, original_indicator, normalized_scores):
+        # 将原始指标值归一化到 [0, 1]
+        original_indicator = original_indicator.squeeze()
         
-
-        # i_new = (i_1*torch.exp(r_1)+i_2*torch.exp(r_2)+i_3*torch.exp(r_3))/\
-        #         (torch.exp(r_1)+torch.exp(r_2)+torch.exp(r_3))
-
-
-        return i_new
+        # 计算优化后的指标值
+        optimized_indicator = original_indicator * normalized_scores
+        
+        return optimized_indicator.sum(dim=1)
+    
+    
+    
+    
 
 
 
 def TTIO_loss(predictions,target):
-    difference = pearsonr(target, predictions)
+        
+    difference = pearsonr(predictions, target)
 
-    return torch.abs(difference)[0]*-1
+    return torch.abs(difference)*-1
 
 # torch.abs(difference)[0]*-1
 
