@@ -7,7 +7,7 @@
 # """
 import os
 
-os.chdir('/Users/jeff/desktop/individualized-indicator')
+os.chdir('/home/jovyan/individualized-indicator')
 current_directory = os.getcwd()
 print("当前工作目录:", current_directory)
 
@@ -21,13 +21,13 @@ from backtest.backtest_pkl import *
 
 ind_start = '2021-11-01'
 ind_end = '2024-06-28'
-day_start = '2022-10-03'
-day_end = '2023-02-24'
-test_start = '2023-03-01'
+day_start = '2023-01-03'
+day_end = '2023-05-31'
+test_start = '2023-06-01'
 test_end = '2024-06-28'
-train_season = '2022_12_01'
-emb_length = 'embeddings_length200_2022_12_01.npy'
-parameter = "emb/2022_12_01/top_8/*.csv"
+train_season = '2023_03_01'
+emb_length = 'embeddings_length200_2023_03_01.npy'
+parameter = "emb/2023_03_01/top_8/*.csv"
 
 
 

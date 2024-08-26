@@ -1,0 +1,8 @@
+numpy==1.26.4
+ta-lib-bin
+torch
+torchvision
+audtorch
+pyarrow
+fastparquet
+tensorboard
