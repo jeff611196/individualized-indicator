@@ -1,8 +1,12 @@
 numpy==1.26.4
-ta-lib-bin
 torch
 torchvision
 audtorch
 pyarrow
 fastparquet
 tensorboard
+tejapi
+gcsfs
+scipy==1.10
+smart_open
+ta-lib-bin
