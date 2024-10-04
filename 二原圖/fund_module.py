@@ -13,9 +13,9 @@ import pandas as pd
 
 stock = pd.read_csv('/Users/jeff/desktop/project/TEJ資料/基金/stock.csv', index_col=0)
 taiwan = pd.read_csv('/Users/jeff/desktop/project/TEJ資料/基金/本國信託基金.csv')
-gcs_read = 'gs://dst-tej/fund/twn/amm/raw-data/20231201-20231231.parquet'
+gcs_read = 'gs://dst-tej/fund/twn/amm/raw-data/20240301-20240331.parquet'
 fund_monthly = read_parquet(gcs_read)
-fund_read = 'gs://dst-tej/fund/twn/aatt/raw-data/20230101-20230101.parquet'
+fund_read = 'gs://dst-tej/fund/twn/aatt/raw-data/20240101-20240101.parquet'
 fund_basic = read_parquet(fund_read)
 
 try:
@@ -191,14 +191,14 @@ def intersection_in_select_taiwan_stock(taiwan_stock: pd.DataFrame, intersection
 
 def find_fund_hold_max(use_fund_intersection: pd.DataFrame) -> pd.Series:
     """
-    列出所有基金的持股數
+    列出所有基金的持有檔數
     
     Args:
         use_fund_intersection(pd.DataFrame): MultiIndex DataFrame，
         含有台灣股票且指定類型的基金持有標的
 
 	Returns:
-        pd.Series: 每隻基金最大持股數量
+        pd.Series: 每隻基金最大持有檔數
     """
     counts = use_fund_intersection['coid'].value_counts()
     return counts
@@ -268,7 +268,7 @@ def del_etf(fund_df_unique_index: pd.DataFrame, code: str) -> pd.DataFrame:
         specify_row = specify_row.replace('NA', np.nan)
         specify_row_drop_na = specify_row.dropna()
         na_count = len(specify_row) - len(specify_row_drop_na)
-        specify_row_drop_na = specify_row_drop_na.append(pd.Series(['NA'] * na_count))
+        specify_row_drop_na = pd.concat([specify_row_drop_na, pd.Series(['NA'] * na_count)])
         specify_row_drop_na.index = specify_row.index
         fund_df_unique_index.iloc[row_specify,:] = specify_row_drop_na
 
@@ -401,6 +401,57 @@ def input_made(node_del_col_equal: pd.DataFrame) -> pd.DataFrame:
         row = np.where(node_del_col_equal_unique.iloc[t,2] == stock.iloc[:,0])[0][0]
         node_del_col_equal_unique.iloc[t,3] = stock.iloc[row,1]
     return node_del_col_equal_unique
+
+def Graph_main(fund_monthly, fund_season, fund_basic):
+    """
+    基金大表生成主程式
+    
+    Args:
+        fund_monthly
+        fund_season
+        fund_basic
+
+	Returns:
+        pd.DataFrame: 基金大表
+    """
+    fund_monthly_datetime = convert_index_to_datetime(fund_monthly)
+    fund_monthly_use_col = chose_index_to_datetime(fund_monthly_datetime)
+    fund_monthly_specified_time = chose_data_to_df(fund_monthly_use_col, fund_season)
+    taiwan_stock = select_taiwan_stock(fund_monthly_specified_time)
+    # fund_name = fund_taiwan_stock(taiwan_stock)
+    # classify = fund_classify(fund_basic)
+    intersection_list = fund_take_intersection(fund_basic,taiwan_stock)
+    use_fund_intersection = intersection_in_select_taiwan_stock(taiwan_stock, intersection_list)
+    counts = find_fund_hold_max(use_fund_intersection)
+    fund_df = make_fund_df(intersection_list, counts, taiwan_stock)
+    fund_df_unique_index = unique_fund(fund_df)
+    fund_df_unique_index = del_etf(fund_df_unique_index,'0050')
+    fund_df_unique_index = del_etf(fund_df_unique_index,'0052')
+    fund_df_unique_index = del_etf(fund_df_unique_index,'0056')
+    
+    fund_season = fund_season.replace('-', '_')
+    # 基金大表
+    fund_df_unique_index.to_csv('./二原圖/fund/'+fund_season+'.csv')
+
+    # fund_stock_node = fund_stock(fund_df_unique_index)
+    # stock_stock_node = stock_stock(fund_df_unique_index)
+    # stock_node_contrary = col_contrary(stock_stock_node)
+    # node_del_col_equal = delete_col_equal(stock_node_contrary)
+    # input_graph = input_made(node_del_col_equal)
+
+
+    # input_graph.to_csv('input graph_230601.csv', encoding='utf-8-sig')
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -23,8 +23,11 @@ class Top_k:
                         
             indicator_columns = np.where(indicator_table.columns == use_indicator_ori.index[i])[0][0]
             
+            use_1 = pd.to_numeric(indicator_table.iloc[:,indicator_large_columns], errors='coerce')
+            use_2 = pd.to_numeric(indicator_table.iloc[:,indicator_columns], errors='coerce')
+            
             #與股價相關最大值的indicator與其他指標的相關係數
-            self.indicator_corr.iloc[i,0] = (indicator_table.iloc[:,indicator_large_columns]).corr(indicator_table.iloc[:,indicator_columns])
+            self.indicator_corr.iloc[i,0] = use_1.corr(use_2)
         
         self.drop_nan_index = self.indicator_corr.index[list(np.where(np.isnan(list(self.indicator_corr.iloc[:,0])))[0])]
         
