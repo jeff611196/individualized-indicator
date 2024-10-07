@@ -34,13 +34,13 @@ train_season = '2024_03_01'
 emb_length = 'embeddings_length200_2024_03_01.npy'
 parameter = "emb/2024_03_01/top_8/*.csv"
 
-# new_date_str = train_season.replace('_', '-')
-# pre_processing = Graph_main(fund_monthly, new_date_str, fund_basic)
+new_date_str = train_season.replace('_', '-')
+pre_processing = Graph_main(fund_monthly, new_date_str, fund_basic)
 
-# fund = pd.read_csv('./二原圖/fund/2024_03_01.csv',index_col = 0)
+fund = pd.read_csv('./二原圖/fund/2024_03_01.csv',index_col = 0)
 
-# from 二原圖.emb_gengrate import *
-# emb_birth = Emb_gengrate(fund)
+from 二原圖.emb_gengrate import *
+emb_birth = Emb_gengrate(fund)
 
 # os.chdir('/Users/jeff/Desktop/individualized-indicator')
 
