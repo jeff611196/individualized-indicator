@@ -9,4 +9,5 @@ tejapi
 gcsfs
 scipy==1.10
 smart_open
+gensim
 ta-lib-bin
