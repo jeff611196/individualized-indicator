@@ -14,7 +14,7 @@ current_directory = os.path.dirname(current_file_path)
 # 切换工作目录到当前文件所在的目录
 os.chdir(current_directory)
 
-os.chdir('../GE')
+# os.chdir('GE')
 
 # import os
 # os.chdir('/Users/jeff/desktop/individualized-indicator/二原圖')
@@ -24,8 +24,8 @@ import numpy as np
 import pandas as pd
 import networkx as nx
 # from packages.classify import read_node_label, Classifier
-from packages import DeepWalk
-from packages.cosine_similar import cosine_similar
+from .GE import DeepWalk
+from .GE.packages.cosine_similar import cosine_similar
 
 def Emb_gengrate(fund):
     """

@@ -42,7 +42,7 @@ fund = pd.read_csv('./二原圖/fund/2024_03_01.csv',index_col = 0)
 from 二原圖.emb_gengrate import *
 emb_birth = Emb_gengrate(fund)
 
-# os.chdir('/Users/jeff/Desktop/individualized-indicator')
+os.chdir('/Users/jeff/Desktop/individualized-indicator')
 
 # os.chdir(current_directory_ori)
 
