@@ -12,7 +12,8 @@ import os
 # current_directory_ori = os.path.dirname(current_file_path_ori)
 # # 切换工作目录到当前文件所在的目录
 # os.chdir(current_directory_ori)
-os.chdir('/Users/jeff/Desktop/individualized-indicator')
+# os.chdir('/Users/jeff/Desktop/individualized-indicator')
+os.chdir('/home/jovyan/individualized-indicator')
 
 import yaml
 import glob
@@ -42,7 +43,7 @@ fund = pd.read_csv('./二原圖/fund/2024_03_01.csv',index_col = 0)
 from 二原圖.emb_gengrate import *
 emb_birth = Emb_gengrate(fund)
 
-os.chdir('/Users/jeff/Desktop/individualized-indicator')
+os.chdir('/home/jovyan/individualized-indicator')
 
 # os.chdir(current_directory_ori)
 
