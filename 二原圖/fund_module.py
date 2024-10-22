@@ -13,9 +13,9 @@ import pandas as pd
 
 stock = pd.read_csv('TEJ資料/基金/stock.csv',index_col = 0)
 taiwan = pd.read_csv('TEJ資料/基金/本國信託基金.csv')
-gcs_read = 'gs://dst-tej/fund/twn/amm/raw-data/20240301-20240331.parquet'
+gcs_read = 'gs://dst-tej/fund/twn/amm/raw-data/20230301-20230331.parquet'
 fund_monthly = read_parquet(gcs_read)
-fund_read = 'gs://dst-tej/fund/twn/aatt/raw-data/20240101-20240101.parquet'
+fund_read = 'gs://dst-tej/fund/twn/aatt/raw-data/20230101-20231231.parquet'
 fund_basic = read_parquet(fund_read)
 
 try:
