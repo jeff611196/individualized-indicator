@@ -59,9 +59,9 @@ stride = 5
 
 etl.emb_path_list = glob.glob(parameter)
 
-# 回測
-input_backtest_table = Input_backtest_table(etl,'top_'+str(TOP_k), test_start, test_end, train_season)
-input_backtest_table_calculate = input_backtest_table.calculate()
+# # 回測
+# input_backtest_table = Input_backtest_table(etl,'top_'+str(TOP_k), test_start, test_end, train_season)
+# input_backtest_table_calculate = input_backtest_table.calculate()
 
 #%%
 # save top_indicator(技術指標的相關係數依高低排序)
