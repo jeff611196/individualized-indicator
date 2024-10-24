@@ -52,14 +52,14 @@ class Indicator_coefficient:
             
             os.mkdir(file_3)
         
-        epochs = 20
+        epochs = 30
 
         model = Model(input_dim, indicator_count)
         model.double()
         # print(model) #將模型print出來看看
         loss_function = TTIO_loss
-        optimizer = optim.Adam(model.parameters(), lr=0.001)
-        scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.9)
+        optimizer = optim.Adam(model.parameters(), lr=0.003)
+        scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=5, gamma=0.9)
         # torch.optim.SGD
         # optimizer = torch.optim.Adam(model.parameters(), lr=0.1, betas=(0.9, 0.999), eps=1e-08, weight_decay=0, amsgrad=False)
 

@@ -28,18 +28,18 @@ from 二原圖.fund_module import *
 
 ind_start = '2021-11-01'
 ind_end = '2024-09-30'
-day_start = '2023-01-03'
-day_end = '2023-05-31'
-test_start = '2023-06-01'
+day_start = '2024-01-02'
+day_end = '2024-05-31'
+test_start = '2024-06-03'
 test_end = '2024-09-30'
-train_season = '2023_03_01'
-emb_length = 'embeddings_length200_2023_03_01.npy'
-parameter = "emb/2023_03_01/top_8/*.csv"
+train_season = '2024_03_01'
+emb_length = 'embeddings_length200_2024_03_01.npy'
+parameter = "emb/2024_03_01/top_8/*.csv"
 
 new_date_str = train_season.replace('_', '-')
 pre_processing = Graph_main(fund_monthly, new_date_str, fund_basic)
 
-fund = pd.read_csv('./二原圖/fund/2023_03_01.csv',index_col = 0)
+fund = pd.read_csv('./二原圖/fund/2024_03_01.csv',index_col = 0)
 
 from 二原圖.emb_gengrate import *
 emb_birth = Emb_gengrate(fund)
