@@ -80,4 +80,4 @@ def Emb_gengrate(fund):
     model = DeepWalk(G, walk_length=200, num_walks=100, workers=1)
     model.train(window_size=3, iter=10)
     embeddings = model.get_embeddings()
-    np.save('../emb/preprocessing/embeddings_length200_2023_03_01.npy', embeddings)
+    np.save('../emb/preprocessing/embeddings_length200_2024_03_01.npy', embeddings)
