@@ -121,6 +121,11 @@ class Input_backtest_table:
         final_df = pd.concat([final_df.iloc[:,0:5], row_sums], axis=1)
         final_df.columns = ['open', 'high', 'low', 'close', 'vol', 'new']
 
+        if not os.path.exists('./emb/'+self.train_season):
+            
+            os.mkdir('./emb/'+self.train_season)
+            os.mkdir('./emb/simulated/')
+
         #每季資料夾內
         final_df.to_pickle('./emb/'+self.train_season+'/'+str(self.top)+'_'+self.test_start+'_'+self.test_end+'.pkl', compression='infer', protocol=5, storage_options=None)
         #simulated內
