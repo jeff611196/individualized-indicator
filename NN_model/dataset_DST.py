@@ -17,6 +17,8 @@ import talib
 import json
 import tidal as td
 import ssl
+import gcsfs
+fs = gcsfs.GCSFileSystem(project="dst-dev2021")
 from torch import optim
 from torch.utils.data import TensorDataset
 from torch.utils.data import DataLoader
@@ -40,6 +42,7 @@ class recommend_stock:
         self.day_end = end
         self.test_start = t_start
         self.test_end = t_end
+        self.train_season = train_season
         self.fund = pd.read_csv('二原圖/fund/'+train_season+'.csv',index_col = 0)
         stock_use = np.unique(self.fund)        
         self.stock = pd.DataFrame(stock_use[~np.isnan(stock_use)])
@@ -98,63 +101,63 @@ class recommend_stock:
         
         
 
-        # self.TSE = TSE
+        self.TSE = TSE
         
-        # if not os.path.exists('./price/'+train_season):
+        if not os.path.exists('./price/'+train_season):
             
-        #     os.mkdir('./price/'+train_season)
+            os.mkdir('./price/'+train_season)
         
-        # TSE.to_csv('./price/'+train_season+'/TSE.csv')
+        TSE.to_csv('./price/'+train_season+'/TSE.csv')
 
-        # open_ = pd.DataFrame(index=datatime_unique, columns=self.DEFAULT_STOCKS)
-        # high_ = pd.DataFrame(index=datatime_unique, columns=self.DEFAULT_STOCKS)
-        # low_ = pd.DataFrame(index=datatime_unique, columns=self.DEFAULT_STOCKS)
-        # close_ = pd.DataFrame(index=datatime_unique, columns=self.DEFAULT_STOCKS)
-        # vol_ = pd.DataFrame(index=datatime_unique, columns=self.DEFAULT_STOCKS)
+        open_ = pd.DataFrame(index=datatime_unique, columns=self.DEFAULT_STOCKS)
+        high_ = pd.DataFrame(index=datatime_unique, columns=self.DEFAULT_STOCKS)
+        low_ = pd.DataFrame(index=datatime_unique, columns=self.DEFAULT_STOCKS)
+        close_ = pd.DataFrame(index=datatime_unique, columns=self.DEFAULT_STOCKS)
+        vol_ = pd.DataFrame(index=datatime_unique, columns=self.DEFAULT_STOCKS)
         
-        # for t in range(0,len(datatime_unique)):
-        #     datatime_row = np.where(stock_df.iloc[:,1] == datatime_unique[t])[0]
-        #     date_stock = stock_df.iloc[datatime_row,:]
+        for t in range(0,len(datatime_unique)):
+            datatime_row = np.where(stock_df.iloc[:,1] == datatime_unique[t])[0]
+            date_stock = stock_df.iloc[datatime_row,:]
 
-        #     for i_0 in range(date_stock.shape[0]):
-        #             col_open = np.where(date_stock['instrument'].iloc[i_0] == open_.columns)[0][0]
-        #             open_.iloc[t,col_open] = date_stock['open'].iloc[i_0]
-        #     for i_1 in range(date_stock.shape[0]):
-        #             col_high = np.where(date_stock['instrument'].iloc[i_1] == high_.columns)[0][0]
-        #             high_.iloc[t,col_high] = date_stock['high'].iloc[i_1]
-        #     for i_2 in range(date_stock.shape[0]):
-        #             col_low = np.where(date_stock['instrument'].iloc[i_2] == open_.columns)[0][0]
-        #             low_.iloc[t,col_low] = date_stock['low'].iloc[i_2]
-        #     for i_3 in range(date_stock.shape[0]):
-        #             col_close = np.where(date_stock['instrument'].iloc[i_3] == open_.columns)[0][0]
-        #             close_.iloc[t,col_close] = date_stock['close'].iloc[i_3]
-        #     for i_4 in range(date_stock.shape[0]):
-        #             col_vol = np.where(date_stock['instrument'].iloc[i_4] == open_.columns)[0][0]
-        #             vol_.iloc[t,col_vol] = date_stock['volume'].iloc[i_4]
+            for i_0 in range(date_stock.shape[0]):
+                    col_open = np.where(date_stock['instrument'].iloc[i_0] == open_.columns)[0][0]
+                    open_.iloc[t,col_open] = date_stock['open'].iloc[i_0]
+            for i_1 in range(date_stock.shape[0]):
+                    col_high = np.where(date_stock['instrument'].iloc[i_1] == high_.columns)[0][0]
+                    high_.iloc[t,col_high] = date_stock['high'].iloc[i_1]
+            for i_2 in range(date_stock.shape[0]):
+                    col_low = np.where(date_stock['instrument'].iloc[i_2] == open_.columns)[0][0]
+                    low_.iloc[t,col_low] = date_stock['low'].iloc[i_2]
+            for i_3 in range(date_stock.shape[0]):
+                    col_close = np.where(date_stock['instrument'].iloc[i_3] == open_.columns)[0][0]
+                    close_.iloc[t,col_close] = date_stock['close'].iloc[i_3]
+            for i_4 in range(date_stock.shape[0]):
+                    col_vol = np.where(date_stock['instrument'].iloc[i_4] == open_.columns)[0][0]
+                    vol_.iloc[t,col_vol] = date_stock['volume'].iloc[i_4]
 
-        # open_filled = open_.fillna('NA')
-        # high_filled = high_.fillna('NA')
-        # low_filled = low_.fillna('NA')
-        # colse_filled = close_.fillna('NA')
-        # vol_filled = vol_.fillna('NA')
+        open_filled = open_.fillna('NA')
+        high_filled = high_.fillna('NA')
+        low_filled = low_.fillna('NA')
+        colse_filled = close_.fillna('NA')
+        vol_filled = vol_.fillna('NA')
         
-        # open_.index = open_.index.strftime('%Y-%m-%d')
-        # high_.index = high_.index.strftime('%Y-%m-%d')
-        # low_.index = low_.index.strftime('%Y-%m-%d')
-        # close_.index = close_.index.strftime('%Y-%m-%d')
-        # vol_.index = vol_.index.strftime('%Y-%m-%d')
+        open_.index = open_.index.strftime('%Y-%m-%d')
+        high_.index = high_.index.strftime('%Y-%m-%d')
+        low_.index = low_.index.strftime('%Y-%m-%d')
+        close_.index = close_.index.strftime('%Y-%m-%d')
+        vol_.index = vol_.index.strftime('%Y-%m-%d')
 
-        # self.open = open_
-        # self.high = high_
-        # self.low = low_
-        # self.close = close_
-        # self.high = high_
+        self.open = open_
+        self.high = high_
+        self.low = low_
+        self.close = close_
+        self.high = high_
         
-        # open_.to_csv('./price/'+train_season+'/open.csv')
-        # high_.to_csv('./price/'+train_season+'/high.csv')
-        # low_.to_csv('./price/'+train_season+'/low.csv')
-        # close_.to_csv('./price/'+train_season+'/close.csv')
-        # vol_.to_csv('./price/'+train_season+'/vol.csv')
+        open_.to_csv('./price/'+train_season+'/open.csv')
+        high_.to_csv('./price/'+train_season+'/high.csv')
+        low_.to_csv('./price/'+train_season+'/low.csv')
+        close_.to_csv('./price/'+train_season+'/close.csv')
+        vol_.to_csv('./price/'+train_season+'/vol.csv')
 
 
 
@@ -593,4 +596,11 @@ class recommend_stock:
   
         minmax_table.to_csv(self.file_3+'/'+stock+'.csv')
         
+        minmax_folder_path_w = 'jeff-stock-wise/minmax/'+ self.train_season +'/'
+        minmax_path_w = minmax_folder_path_w + stock + ".csv"  # 指定檔案名稱
+        with fs.open(minmax_path_w, 'w') as f:
+            minmax_table.to_csv(f)
+
+        # './emb/'+self.train_season+'/minmax/'+self.top+'/'+stock+'.csv'
+
         return dataset

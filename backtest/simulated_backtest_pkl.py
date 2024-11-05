@@ -1,23 +1,28 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Mar  3 10:40:42 2023
-
-@author: jeff
-"""
+#%%
+import os
+os.getcwd()
+#%%
 import pandas as pd
 import numpy as np
 import glob
 import yaml
 import gcsfs
+fs = gcsfs.GCSFileSystem(project="dst-dev2021")
+
 from tqdm import tqdm, trange
-from NN_model.dataset_DST import *
+from NN_model.dataset_DST_simulated import *
 
 class Input_backtest_table:
     def __init__(self, recommend_stock, top_k, test_start, test_end, train_season):
         self.recommend_stock = recommend_stock
         self.train_season = train_season
-        self.indicator_top_list = pd.read_csv('./emb/'+self.train_season+'/indicator_chose.csv')['0'].tolist()
+        # self.indicator_top_list = pd.read_csv('./emb/'+self.train_season+'/indicator_chose.csv', index_col=0)['0'].tolist()
+        indicator_path_r = 'jeff-stock-wise/indicator/'+ train_season + '/indicator_chose.csv'
+        
+        with fs.open(indicator_path_r, 'r') as f:
+            self.indicator_top_list = pd.read_csv(f, index_col=0)
+
+        self.indicator_top_list = self.indicator_top_list['0'].tolist()
         self.embeddings_concat = self.recommend_stock.embeddings_concat
         # self.start = self.recommend_stock.day_start
         # self.end = self.recommend_stock.day_end
@@ -36,7 +41,10 @@ class Input_backtest_table:
     
     def calculate(self):
 
-        coe = pd.read_csv('./emb/'+self.train_season+'/'+self.top+'/result.csv',index_col = 0)
+        result_path_r = 'jeff-stock-wise/result.csv'
+        with fs.open(result_path_r, 'r') as f:
+            coe = pd.read_csv(f, index_col=0)
+        # coe = pd.read_csv('./emb/'+self.train_season+'/'+self.top+'/result.csv',index_col = 0)
         raw_scores = pd.DataFrame(columns=range(coe.shape[1]), index=range(len(self.embeddings_concat)))
 
         for s in tqdm(range(0,len(self.embeddings_concat))):
@@ -44,7 +52,12 @@ class Input_backtest_table:
             stock = self.embeddings_concat.iloc[s,0]
             stock_coid = np.where(self.embeddings_concat.iloc[:,0] == stock)[0][0]
 
-            stock_minmax = pd.read_csv('./emb/'+self.train_season+'/minmax/'+self.top+'/'+stock+'.csv')
+            # stock_minmax = pd.read_csv('./emb/'+self.train_season+'/minmax/'+self.top+'/'+stock+'.csv')
+
+            minmax_path_r = 'jeff-stock-wise/minmax/'+ self.train_season +'/'+stock+'.csv'
+            with fs.open(minmax_path_r, 'r') as f:
+                stock_minmax = pd.read_csv(f)
+
             stock_minmax.set_index(keys = ['stock','minmax'],inplace=True)
 
             emb = self.embeddings_concat.iloc[np.where(self.embeddings_concat.iloc[:,0] == stock)[0][0],:]
@@ -110,5 +123,11 @@ class Input_backtest_table:
 
         #每季資料夾內
         final_df.to_pickle('./emb/'+self.train_season+'/'+str(self.top)+'_'+self.test_start+'_'+self.test_end+'.pkl', compression='infer', protocol=5, storage_options=None)
-        #emb內
-        final_df.to_pickle('./emb/'+str(self.top)+'_'+self.test_start+'_'+self.test_end+'.pkl', compression='infer', protocol=5, storage_options=None)
+        #simulated內
+        final_df.to_pickle('./emb/simulated/'+str(self.top)+'_'+self.test_start+'_'+self.test_end+'.pkl', compression='infer', protocol=5, storage_options=None)
+        #GCS上
+        pkl_folder_path_w = 'jeff-stock-wise/simulated/'
+        # fs.touch(folder_path + "simulated")
+        pkl_path_w = pkl_folder_path_w + str(self.top)+'_'+self.test_start+'_'+self.test_end+'.pkl'
+        with fs.open(pkl_path_w, 'wb') as f:
+            final_df.to_pickle(f)

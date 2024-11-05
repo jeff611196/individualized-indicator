@@ -24,6 +24,8 @@ import numpy as np
 import pandas as pd
 import networkx as nx
 # from packages.classify import read_node_label, Classifier
+import gcsfs
+fs = gcsfs.GCSFileSystem(project="dst-dev2021")
 from .GE import DeepWalk
 from .GE.packages.cosine_similar import cosine_similar
 
@@ -80,4 +82,10 @@ def Emb_gengrate(fund):
     model = DeepWalk(G, walk_length=200, num_walks=100, workers=1)
     model.train(window_size=3, iter=10)
     embeddings = model.get_embeddings()
-    np.save('../emb/preprocessing/embeddings_length200_2024_03_01.npy', embeddings)
+    np.save('../emb/preprocessing/embeddings_length200_2024_06_01.npy', embeddings)
+    
+    emb_folder_path_w = 'jeff-stock-wise/emb/'
+    emb_path_w = emb_folder_path_w + 'embeddings_length200_2024_06_01.npy'
+
+    with fs.open(emb_path_w, 'wb') as f:
+        np.save(f, embeddings)

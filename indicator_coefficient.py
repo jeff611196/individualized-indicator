@@ -15,6 +15,8 @@ from NN_model.nn import *
 import statistics
 import os
 import shutil
+import gcsfs
+fs = gcsfs.GCSFileSystem(project="dst-dev2021")
 from torch.utils.tensorboard import SummaryWriter
 
 class Indicator_coefficient:
@@ -156,7 +158,13 @@ class Indicator_coefficient:
         title = self.indicator_top_list
                     
         emb_data.to_csv(file_1+'/'+'result.csv')
-                       
+
+        result_folder_path_w = 'jeff-stock-wise/'
+        result_path_w = result_folder_path_w + "result.csv"  # 指定檔案名稱
+        with fs.open(result_path_w, 'w') as f:
+            emb_data.to_csv(f)
+
+
         print('end')
 
     

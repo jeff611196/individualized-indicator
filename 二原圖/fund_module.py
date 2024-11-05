@@ -10,10 +10,12 @@ import numpy as np
 import tejapi
 from pandas import read_parquet
 import pandas as pd
+import gcsfs
+fs = gcsfs.GCSFileSystem(project="dst-dev2021")
 
 stock = pd.read_csv('TEJ資料/基金/stock.csv',index_col = 0)
 taiwan = pd.read_csv('TEJ資料/基金/本國信託基金.csv')
-gcs_read = 'gs://dst-tej/fund/twn/amm/raw-data/20240301-20240331.parquet'
+gcs_read = 'gs://dst-tej/fund/twn/amm/raw-data/20240601-20240630.parquet'
 fund_monthly = read_parquet(gcs_read)
 fund_read = 'gs://dst-tej/fund/twn/aatt/raw-data/20240101-20240101.parquet'
 fund_basic = read_parquet(fund_read)
@@ -431,7 +433,12 @@ def Graph_main(fund_monthly, fund_season, fund_basic):
     
     fund_season = fund_season.replace('-', '_')
     # 基金大表
-    fund_df_unique_index.to_csv('./二原圖/fund/'+fund_season+'.csv')
+    fund_df_unique_index.to_csv('./二原圖/fund/'+fund_season +'.csv')
+
+    fund_folder_path_w = 'jeff-stock-wise/fund/'
+    fund_path_w = fund_folder_path_w + fund_season +'.csv'  # 指定檔案名稱
+    with fs.open(fund_path_w, 'w') as f:
+        fund_df_unique_index.to_csv(f)
 
     # fund_stock_node = fund_stock(fund_df_unique_index)
     # stock_stock_node = stock_stock(fund_df_unique_index)
