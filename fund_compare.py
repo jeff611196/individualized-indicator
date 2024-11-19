@@ -21,8 +21,8 @@ total_data = pd.read_parquet(
     f"{PLUMBER_HOST}tej/fund/twn/anav",
     storage_options={
         "gcp-token": json.dumps(token),
-        "start-date": "2022-09-01",
-        "end-date": "2022-11-30"
+        "start-date": "2024-06-01",
+        "end-date": "2024-08-30"
     },
 )
 
@@ -43,7 +43,7 @@ df_list = [pd.read_csv(file,index_col = 0) for file in files_sorted[1:]]
 
 
 #變數月份
-total_fund = list(df_list[1].index)
+total_fund = list(df_list[8].index)
 
 
 time = sorted(total_data.iloc[:,1].unique().tolist())
@@ -51,7 +51,7 @@ time = sorted(total_data.iloc[:,1].unique().tolist())
 ori_df = pd.DataFrame(index=time, columns=total_fund)
 ori_reward_df = pd.DataFrame(index=time, columns=total_fund)
 ori_max_min_df = pd.DataFrame(index=time, columns=["max","min"])
-date = pd.read_csv('/Users/jeff/Desktop/project/factor/fund_net_value/date_2022_09_01.csv',index_col = 0)
+date = pd.read_csv('/Users/jeff/Desktop/project/factor/fund_net_value/date_2024_06_01.csv',index_col = 0)
 df = ori_df[~ori_df.index.isin(date.iloc[:,0])]
 reward_df = ori_reward_df[~ori_reward_df.index.isin(date.iloc[:,0])]
 max_min_df = ori_max_min_df[~ori_max_min_df.index.isin(date.iloc[:,0])]
@@ -86,8 +86,9 @@ for k in range(0,len(total_fund)):
 
 max_min_df['max'] = reward_df.max(axis=1)
 max_min_df['min'] = reward_df.min(axis=1)
+max_min_df['mean'] = reward_df.mean(axis=1)
 ## max_min_df.iloc[0,:] = 0
-# max_min_df.to_csv('/Users/jeff/Desktop/project/factor/fund_net_value/2024_06_01.csv')
+max_min_df.to_csv('/Users/jeff/Desktop/project/factor/fund_net_value/2024_06_01.csv')
 
 
 #首輪
@@ -104,6 +105,7 @@ unique_dates_in_df = pd.DataFrame(set(look_df) - set(look_dataframe_sorted))
 import os
 import glob
 import copy
+import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
@@ -133,7 +135,21 @@ for i in range(1,len(df_list)):
 
 
 
+
+Portfolio_info = pd.read_csv('/Users/jeff/Desktop/project/factor/Portfolio_info.csv',index_col = 0)
 ori.iloc[102:520, 1] = ori.iloc[102:520, 1] + 0.5743353035794835
+Portfolio_info.index = pd.to_datetime(Portfolio_info.index).tz_localize("UTC")
+
+look_1 = ori.index
+look_2 = Portfolio_info.index
+
+dates_to_remove = look_2.difference(look_1)
+df_filtered = Portfolio_info.drop(index=dates_to_remove)
+ori['cum_w_cost'] = df_filtered.iloc[:,2]
+
+ori.index = pd.to_datetime(ori.index)
+ori.index = ori.index.strftime("%Y-%m-%d")
+ori.to_csv('/Users/jeff/Desktop/project/factor/Portfolio_info_3.csv')
 
 # plt.plot(ori.index, ori['max'], marker='o', color='blue', label='Max')
 # plt.plot(ori.index, ori['min'], marker='o', color='red', label='Min')
@@ -148,3 +164,15 @@ plt.xticks(rotation=45)  # 旋轉 x 軸標籤
 plt.grid(True)
 plt.tight_layout()
 plt.show()
+
+
+
+
+
+
+import pandas as pd
+x = pd.read_csv('/Users/jeff/Desktop/project/factor/Portfolio_info_4.csv',index_col = 0)
+x['cumulative'] = x['mean'].cumsum()
+x['cumulative'] = x['cumulative'].fillna(method='ffill')
+x.to_csv('/Users/jeff/Desktop/project/factor/Portfolio_info_5.csv')
+x['add'] = x['mean']+1
