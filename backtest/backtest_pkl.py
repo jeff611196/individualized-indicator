@@ -36,7 +36,7 @@ class Input_backtest_table:
     
     def calculate(self):
 
-        coe = pd.read_csv('./emb/'+self.train_season+'/'+self.top+'/result.csv',index_col = 0)
+        coe = pd.read_csv('./emb/'+self.train_season+'/'+self.top+'/result_spearman.csv',index_col = 0)
         raw_scores = pd.DataFrame(columns=range(coe.shape[1]), index=range(len(self.embeddings_concat)))
 
         for s in tqdm(range(0,len(self.embeddings_concat))):
@@ -113,7 +113,9 @@ class Input_backtest_table:
             os.mkdir('./emb/'+self.train_season)
             os.mkdir('./emb/simulated/')
 
-        #每季資料夾內
-        final_df.to_pickle('./emb/'+self.train_season+'/'+str(self.top)+'_'+self.test_start+'_'+self.test_end+'.pkl', compression='infer', protocol=5, storage_options=None)
-        #emb內
-        final_df.to_pickle('./emb/'+str(self.top)+'_'+self.test_start+'_'+self.test_end+'.pkl', compression='infer', protocol=5, storage_options=None)
+        # #每季資料夾內
+        # final_df.to_pickle('./emb/'+self.train_season+'/'+str(self.top)+'_'+self.test_start+'_'+self.test_end+'.pkl', compression='infer', protocol=5, storage_options=None)
+        # #emb內
+        # final_df.to_pickle('./emb/'+str(self.top)+'_'+self.test_start+'_'+self.test_end+'.pkl', compression='infer', protocol=5, storage_options=None)
+        #emb/內
+        final_df.to_pickle('./emb/spearman/'+str(self.top)+'_'+self.test_start+'_'+self.test_end+'.pkl', compression='infer', protocol=5, storage_options=None)

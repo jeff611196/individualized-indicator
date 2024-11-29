@@ -112,9 +112,9 @@ def differentiable_ic(predictions, targets):
 
 def TTIO_loss(predictions,target):
         
-    difference = pearsonr(predictions, target)
+    # difference = pearsonr(predictions, target)
     # difference = spearman_corr(predictions, target)
-    # difference = differentiable_ic(predictions, target)
+    difference = differentiable_ic(predictions, target)
 
     return torch.abs(difference)*-1
 
