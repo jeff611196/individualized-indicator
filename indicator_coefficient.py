@@ -166,6 +166,3 @@ class Indicator_coefficient:
 
 
         print('end')
-
-    
-
