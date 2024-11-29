@@ -41,7 +41,7 @@ class Input_backtest_table:
     
     def calculate(self):
 
-        result_path_r = 'jeff-stock-wise/result.csv'
+        result_path_r = 'jeff-stock-wise/train/result_'+train_season+'.csv'
         with fs.open(result_path_r, 'r') as f:
             coe = pd.read_csv(f, index_col=0)
         # coe = pd.read_csv('./emb/'+self.train_season+'/'+self.top+'/result.csv',index_col = 0)

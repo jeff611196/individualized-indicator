@@ -54,7 +54,7 @@ class Indicator_coefficient:
             
             os.mkdir(file_3)
         
-        epochs = 30
+        epochs = 1
 
         model = Model(input_dim, indicator_count)
         model.double()
@@ -157,10 +157,10 @@ class Indicator_coefficient:
                                         
         title = self.indicator_top_list
                     
-        emb_data.to_csv(file_1+'/'+'result.csv')
+        emb_data.to_csv(file_1+'/'+'result_spearman.csv')
 
-        result_folder_path_w = 'jeff-stock-wise/'
-        result_path_w = result_folder_path_w + "result.csv"  # 指定檔案名稱
+        result_folder_path_w = 'jeff-stock-wise/train/'
+        result_path_w = result_folder_path_w + "result_"+file+".csv"  # 指定檔案名稱
         with fs.open(result_path_w, 'w') as f:
             emb_data.to_csv(f)
 
