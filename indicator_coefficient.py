@@ -54,7 +54,7 @@ class Indicator_coefficient:
             
             os.mkdir(file_3)
         
-        epochs = 1
+        epochs = 30
 
         model = Model(input_dim, indicator_count)
         model.double()
