@@ -5,7 +5,7 @@
 
 # @author: jeff
 # """
-#%%
+
 import os
 # # 获取当前文件的绝对路径
 # current_file_path_ori = os.path.abspath(__file__)
@@ -14,11 +14,11 @@ import os
 # # 切换工作目录到当前文件所在的目录
 # os.chdir(current_directory_ori)
 # os.chdir('/Users/jeff/Desktop/individualized-indicator')
-os.chdir('/home/jovyan/individualized-indicator')
-
+# os.chdir('/home/jovyan/individualized-indicator')
 import yaml
 import glob
 import pandas as pd
+from pathlib import Path
 from  copy import deepcopy
 from NN_model.dataset_DST import *
 from 標準化週期.spec import *
@@ -44,13 +44,14 @@ fund = pd.read_csv('./二原圖/fund/2024_06_01.csv',index_col = 0)
 # from 二原圖.emb_gengrate import *
 # emb_birth = Emb_gengrate(fund)
 
-os.chdir('/home/jovyan/individualized-indicator')
+# os.chdir('/home/jovyan/individualized-indicator')
 
 # os.chdir(current_directory_ori)
 
 # stock embedding
 etl = recommend_stock(emb_length, ind_start, ind_end, day_start, day_end, test_start, test_end, train_season)
 
+#%%
 # 計算完的indicator係數
 TOP_k = 8
 corr = 0.3

@@ -1,5 +1,32 @@
 [[_TOC_]]
 
+## 快速開始
+
+1. clone 專案：
+   ```bash
+   git clone https://gitlab.com/dst-dev/individualized-indicator.git
+   ```
+2. 進入專案資料夾：
+   ```bash
+   cd individualized-indicator
+   ```
+3. 建立 conda 環境：
+   ```bash
+   conda create -p ./env python=3.10 numpy scipy pandas jupyter ta-lib -c conda-forge
+   ```
+4. 使用建立的 conda 環境：
+   ```bash
+   conda activate ./env
+   ```
+5. 取得 gcp token：
+   ```bash
+   gcloud auth application-default login
+   ```
+6. 安裝依賴套件：
+   ```bash
+   cat requirements.txt | xargs -n 1 -L 1 pip install
+   ```
+
 # Individualized-Indicator
 * 重要的投資方法之一：技術交易指標作為歷史價格和交易量的數學總結
 
@@ -73,3 +100,9 @@ git clone https://gitlab.com/dst-dev/individualized-indicator.git
 ```python
 cat requirements.txt | xargs -n 1 -L 1 pip install
 ```
+
+#### 檔案執行順序
+---
+
+1. main.py
+2. backtest/backtest.ipynb

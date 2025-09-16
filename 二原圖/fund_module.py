@@ -11,13 +11,22 @@ import tejapi
 from pandas import read_parquet
 import pandas as pd
 import gcsfs
+from pathlib import Path
 fs = gcsfs.GCSFileSystem(project="dst-dev2021")
 
+# ROOT_DIR = Path(__file__).resolve().parent.parent
+# # 拼接到資料路徑
+# file_path = ROOT_DIR / "TEJ資料" / "基金" / "stock.csv"
+# file_path_2 = ROOT_DIR / "TEJ資料" / "基金" / "本國信託基金.csv"
+# stock = pd.read_csv(file_path, index_col=0)
+# taiwan = pd.read_csv(file_path_2)
 stock = pd.read_csv('TEJ資料/基金/stock.csv',index_col = 0)
 taiwan = pd.read_csv('TEJ資料/基金/本國信託基金.csv')
+
+
 gcs_read = 'gs://dst-tej/fund/twn/amm/raw-data/20240601-20240630.parquet'
 fund_monthly = read_parquet(gcs_read)
-fund_read = 'gs://dst-tej/fund/twn/aatt/raw-data/20240101-20240101.parquet'
+fund_read = 'gs://dst-tej/fund/twn/aatt/raw-data/data.parquet'
 fund_basic = read_parquet(fund_read)
 
 try:

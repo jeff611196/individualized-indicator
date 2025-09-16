@@ -16,9 +16,10 @@ import shutil
 import talib
 import json
 import tidal as td
-import ssl
-import gcsfs
-fs = gcsfs.GCSFileSystem(project="dst-dev2021")
+# import ssl
+from gcsfs import GCSFileSystem
+fs = GCSFileSystem()
+HOST = "http://api.aqua-ut.cathayholdings.internal.com.tw/api/plumber"
 from torch import optim
 from torch.utils.data import TensorDataset
 from torch.utils.data import DataLoader
@@ -44,7 +45,7 @@ class recommend_stock:
         self.test_end = t_end
         self.train_season = train_season
         self.fund = pd.read_csv('二原圖/fund/'+train_season+'.csv',index_col = 0)
-        stock_use = np.unique(self.fund)        
+        stock_use = np.unique(self.fund)
         self.stock = pd.DataFrame(stock_use[~np.isnan(stock_use)])
         self.DEFAULT_STOCKS = list(self.stock[0].astype(int).astype(str))
         self.stock['0'] = np.nan
@@ -53,16 +54,10 @@ class recommend_stock:
         for i in range(0,self.stock.shape[0]):
             self.stock.iloc[i,1] = standard.iloc[np.where(self.stock.iloc[i,0] == standard.iloc[:,0])[0][0],1]
         
-        ssl._create_default_https_context = ssl._create_unverified_context
-
-        PLUMBER_HOST = "https://dev-api.ddt-dst.cc/api/plumber/"
-        with open(f'{str(Path.home())}/.config/gcloud/application_default_credentials.json') as plumber_token:
-            token = json.load(plumber_token)
-
         quote_data = pd.read_parquet(
-            f"{PLUMBER_HOST}stocks/tw/ohlcv",
+            f"{HOST}/stocks/tw/ohlcv",
             storage_options={
-                "gcp-token": json.dumps(token),
+                "gcp-token": fs.credentials.credentials.to_json(),
                 "start-date": self.ind_start,
                 "end-date": self.ind_end,
                 "tickers": ",".join([stock for stock in self.DEFAULT_STOCKS]),
@@ -81,9 +76,9 @@ class recommend_stock:
         datatime_unique = np.unique(stock_df.iloc[:,1])
 
         TSE = pd.read_parquet(
-            f"{PLUMBER_HOST}stocks/tw/ohlcv",
+            f"{HOST}/stocks/tw/ohlcv",
             storage_options={
-                "gcp-token": json.dumps(token),
+                "gcp-token": fs.credentials.credentials.to_json(),
                 "start-date": self.ind_start,
                 "end-date": self.ind_end,
                 "tickers": ",".join([stock for stock in ['Y9999']]),
